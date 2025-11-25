@@ -1,0 +1,110 @@
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+
+<%-- 
+    This is our one, centralized navigation bar.
+    It includes the role-based logic for Admin/Customer links
+    and the new Search Form.
+--%>
+
+<style>
+    /* * This CSS makes the search form (which is an <li>) 
+     * align horizontally.
+    */
+    .nav-search-form {
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Space between input and button */
+    }
+    .nav-search-form input[type="text"] {
+        padding: 5px 8px;
+        font-size: 0.9rem;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+    .nav-search-form button {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .nav-search-form button:hover {
+        background-color: #0056b3;
+    }
+
+    /* --- *** TWO-LINE LAYOUT RULES *** --- */
+    
+    /* * 1. Make the <ul> a flex container that can wrap
+     * and center the links.
+     */
+    nav ul {
+        display: flex;
+        flex-wrap: wrap;         /* This allows items to wrap to a new line */
+        justify-content: center; /* This centers the links */
+        align-items: center;
+        gap: 10px;               /* This adds space between your links */
+        padding: 0;              /* Override any default padding */
+        list-style: none;        /* Remove bullets */
+    }
+
+    /* * 2. Target the search bar's <li>, make it 100% wide,
+     * AND make it a flex container that centers its child.
+     */
+    .nav-search-item {
+        flex-basis: 100%;        /* Makes this <li> take the full width */
+        margin-top: 10px;        /* Adds some space above the search bar */
+        
+        /* THIS IS THE CENTERING RULE */
+        display: flex;           /* Makes the <li> a flex container */
+        justify-content: center; /* Centers its child (the <form>) */
+    }
+    /* --- *** END OF FIX *** --- */
+
+</style>
+
+<nav>
+    <ul>
+        <%-- Admin-only Links --%>
+        <c:if test="${sessionScope.userRole == 'admin'}">
+            <li><a href="${pageContext.request.contextPath}/">Manage Books</a></li>
+            <li><a href="${pageContext.request.contextPath}/authorList">Manage Authors</a></li>
+        </c:if>
+
+        <%-- Customer-only Links --%>
+        <c:if test="${sessionScope.userRole == 'customer'}">
+            <li><a href="${pageContext.request.contextPath}/">Home</a></li>
+        </c:if>
+        
+        <c:if test="${not empty sessionScope.customerName}">
+            <li><a href="${pageContext.request.contextPath}/cart?action=view">View Cart</a></li>
+        </c:if>
+        
+        <%-- Guest-only Link --%>
+        <c:if test="${empty sessionScope.customerName}">
+            <li><a href="${pageContext.request.contextPath}/customer?action=showLogin">Customer Login</a></li>
+        </c:if>
+        
+        <%-- Logout Link (if logged in) --%>
+        <c:if test="${not empty sessionScope.customerName}">
+            <li>
+                <a href="${pageContext.request.contextPath}/customer?action=logout" class="logout-link">
+                    Logout (<c:out value="${sessionScope.customerName}" />)
+                </a>
+            </li>
+        </c:if>
+
+        
+        <c:if test="${not empty sessionScope.customerName or sessionScope.userRole == 'admin'}">
+            <li class="nav-search-item">
+                <form action="${pageContext.request.contextPath}/" method="get" class="nav-search-form">
+                    <input type="hidden" name="action" value="search" />
+                    <input type="text" name="query" placeholder="Search by title or ISBN" value="<c:out value='${param.query}' />" />
+                    <button type="submit">Search</button>
+                </form>
+            </li>
+        </c:if>
+        
+    </ul>
+</nav>
