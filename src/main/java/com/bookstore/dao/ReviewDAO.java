@@ -12,61 +12,46 @@ import com.bookstore.util.DatabaseConnection;
 
 public class ReviewDAO {
 
-    /**
-     * Fetches all reviews for a specific book, joining with the Customer table
-     * to get the customer's name.
-     */
-    public List<Review> getReviewsForBook(String isbn) {
-        System.out.println("[ReviewDAO] Getting reviews for book: " + isbn);
+    // List all reviews for a specific book, ordered by most recent
+    public List<Review> listReviewsForBook(String isbn) {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT r.*, c.name FROM Reviews r " +
+        String sql = "SELECT r.*, c.name as customer_name " +
+                     "FROM Reviews r " +
                      "JOIN Customers c ON r.customer_id = c.customer_id " +
-                     "WHERE r.isbn = ? ORDER BY r.review_date DESC";
+                     "WHERE r.isbn = ? " +
+                     "ORDER BY r.review_date DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, isbn);
+            ResultSet rs = pstmt.executeQuery();
 
-            ps.setString(1, isbn);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Review review = new Review();
-                    review.setReviewId(rs.getInt("review_id"));
-                    review.setIsbn(rs.getString("isbn"));
-                    review.setCustomerId(rs.getInt("customer_id"));
-                    review.setRating(rs.getInt("rating"));
-                    review.setReviewText(rs.getString("review_text"));
-                    // <-- UPDATED to getTimestamp
-                    review.setReviewDate(rs.getTimestamp("review_date")); 
-                    review.setCustomerName(rs.getString("name")); // From JOIN
-                    reviews.add(review);
-                }
+            while (rs.next()) {
+                Review review = mapResultSetToReview(rs);
+                review.setCustomerName(rs.getString("customer_name"));
+                reviews.add(review);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("[ReviewDAO] Found " + reviews.size() + " reviews.");
         return reviews;
     }
 
-    /**
-     * Adds a new review to the database.
-     */
+    // Add a new review
     public boolean addReview(Review review) {
-        System.out.println("[ReviewDAO] Adding review for: " + review.getIsbn() + " by " + review.getCustomerId());
+        String sql = "INSERT INTO Reviews (isbn, customer_id, rating, review_text, review_date) " +
+                     "VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)";
         
-        // <-- UPDATED SQL: Removed review_date, DB will handle it.
-        String sql = "INSERT INTO Reviews (isbn, customer_id, rating, review_text) " +
-                     "VALUES (?, ?, ?, ?)";
-
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, review.getIsbn());
-            ps.setInt(2, review.getCustomerId());
-            ps.setInt(3, review.getRating());
-            ps.setString(4, review.getReviewText());
-
-            int rowsAffected = ps.executeUpdate();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, review.getIsbn());
+            pstmt.setInt(2, review.getCustomerId());
+            pstmt.setInt(3, review.getRating());
+            pstmt.setString(4, review.getReviewText());
+            
+            int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -74,47 +59,112 @@ public class ReviewDAO {
         }
     }
 
-    /**
-     * Checks if a customer has already reviewed a specific book.
-     */
-    public boolean checkIfCustomerReviewedBook(int customerId, String isbn) {
-        String sql = "SELECT 1 FROM Reviews WHERE customer_id = ? AND isbn = ? LIMIT 1";
+    // Update an existing review
+    public boolean updateReview(Review review) {
+        String sql = "UPDATE Reviews SET rating = ?, review_text = ?, review_date = CURRENT_TIMESTAMP " +
+                     "WHERE review_id = ? AND customer_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            ps.setInt(1, customerId);
-            ps.setString(2, isbn);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // true if a record was found
-            }
+            pstmt.setInt(1, review.getRating());
+            pstmt.setString(2, review.getReviewText());
+            pstmt.setInt(3, review.getReviewId());
+            pstmt.setInt(4, review.getCustomerId()); // Security check: ensure user owns the review
+            
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    /**
-     * Checks if a customer has a "Placed" order for this book.
-     */
-    public boolean checkIfCustomerPurchasedBook(int customerId, String isbn) {
-        String sql = "SELECT 1 FROM Orders o " +
-                     "JOIN OrderItems oi ON o.order_id = oi.order_id " +
-                     "WHERE o.customer_id = ? AND oi.isbn = ? AND o.status = 'Placed' LIMIT 1";
-
+    // Delete a review
+    public boolean deleteReview(int reviewId, int customerId) {
+        String sql = "DELETE FROM Reviews WHERE review_id = ? AND customer_id = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            ps.setInt(1, customerId);
-            ps.setString(2, isbn);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // true if a record was found
-            }
+            pstmt.setInt(1, reviewId);
+            pstmt.setInt(2, customerId); // Security check
+            
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Find a specific review by a customer for a book (to check if they already reviewed it)
+    public Review findReviewByCustomerAndBook(int customerId, String isbn) {
+        String sql = "SELECT * FROM Reviews WHERE customer_id = ? AND isbn = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, customerId);
+            pstmt.setString(2, isbn);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return mapResultSetToReview(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Get average rating for a book
+    public double getAverageRating(String isbn) {
+        String sql = "SELECT AVG(rating) FROM Reviews WHERE isbn = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, isbn);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble(1); // Returns 0.0 if NULL
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    // Get total number of reviews for a book
+    public int getReviewCount(String isbn) {
+        String sql = "SELECT COUNT(*) FROM Reviews WHERE isbn = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, isbn);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Helper method to map ResultSet to Review object
+    private Review mapResultSetToReview(ResultSet rs) throws SQLException {
+        Review review = new Review();
+        review.setReviewId(rs.getInt("review_id"));
+        review.setIsbn(rs.getString("isbn"));
+        review.setCustomerId(rs.getInt("customer_id"));
+        review.setRating(rs.getInt("rating"));
+        review.setReviewText(rs.getString("review_text"));
+        review.setReviewDate(rs.getTimestamp("review_date"));
+        return review;
     }
 }

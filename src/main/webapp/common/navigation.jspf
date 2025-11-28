@@ -100,7 +100,7 @@
             <li class="nav-search-item">
                 <form action="${pageContext.request.contextPath}/" method="get" class="nav-search-form">
                     <input type="hidden" name="action" value="search" />
-                    <input type="text" name="query" placeholder="Search by title or ISBN" value="<c:out value='${param.query}' />" />
+                    <input type="text" name="query" placeholder="Search by title, ISBN, or author" value="<c:out value='${param.query}' />" />
                     <button type="submit">Search</button>
                 </form>
             </li>

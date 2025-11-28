@@ -6,13 +6,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession; // Import HttpSession
 import java.io.IOException;
 import java.util.List;
 
-import com.bookstore.dao.AuthorDAO; // We need this for the book details page
+import com.bookstore.dao.AuthorDAO; 
 import com.bookstore.dao.BookDAO;
+import com.bookstore.dao.ReviewDAO; // Import ReviewDAO
 import com.bookstore.model.Author;
 import com.bookstore.model.Book;
+import com.bookstore.model.Review; // Import Review model
 
 /**
  * Servlet controller for all Book-related C.R.U.D. and Search actions.
@@ -31,11 +34,13 @@ public class BookServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     private BookDAO bookDAO;
-    private AuthorDAO authorDAO; // Add AuthorDAO
+    private AuthorDAO authorDAO;
+    private ReviewDAO reviewDAO; // Add ReviewDAO
 
     public void init() {
         bookDAO = new BookDAO();
-        authorDAO = new AuthorDAO(); // Initialize AuthorDAO
+        authorDAO = new AuthorDAO();
+        reviewDAO = new ReviewDAO(); // Initialize ReviewDAO
     }
 
     /**
@@ -137,7 +142,7 @@ public class BookServlet extends HttpServlet {
     
     /**
      * Shows the book details page.
-     * This method needs to fetch BOTH the book and its authors.
+     * This method needs to fetch BOTH the book, its authors, AND its reviews.
      */
     private void viewBookDetails(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -145,11 +150,30 @@ public class BookServlet extends HttpServlet {
         String isbn = request.getParameter("isbn");
         System.out.println("[BookServlet] Executing action: viewBookDetails for ISBN " + isbn);
         
+        // 1. Fetch Book & Authors
         Book book = bookDAO.findBookByIsbn(isbn);
-        List<Author> authors = authorDAO.getAuthorsForBook(isbn); // Fetch authors
+        List<Author> authors = authorDAO.getAuthorsForBook(isbn);
         
+        // 2. Fetch Reviews & Stats
+        List<Review> reviews = reviewDAO.listReviewsForBook(isbn);
+        double avgRating = reviewDAO.getAverageRating(isbn);
+        int reviewCount = reviewDAO.getReviewCount(isbn);
+        
+        // 3. Check if current user has a review (for Edit form)
+        HttpSession session = request.getSession(false);
+        Review userReview = null;
+        if (session != null && session.getAttribute("customerId") != null) {
+            int customerId = (int) session.getAttribute("customerId");
+            userReview = reviewDAO.findReviewByCustomerAndBook(customerId, isbn);
+        }
+        
+        // 4. Set Attributes
         request.setAttribute("book", book);
-        request.setAttribute("authors", authors); // Add authors to the request
+        request.setAttribute("authors", authors);
+        request.setAttribute("reviews", reviews);
+        request.setAttribute("avgRating", avgRating);
+        request.setAttribute("reviewCount", reviewCount);
+        request.setAttribute("userReview", userReview);
         
         RequestDispatcher dispatcher = request.getRequestDispatcher("book-details.jsp");
         dispatcher.forward(request, response);

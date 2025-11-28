@@ -80,6 +80,12 @@
         </c:if>
         
         <c:if test="${not empty sessionScope.customerName}">
+            
+            <!-- Welcome Message -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2>Welcome, <c:out value="${sessionScope.customerName}" />!</h2>
+            </div>
+
             <!-- Show a different title based on search -->
             <c:if test="${not empty param.query}">
                 <h1>Search Results for: "<c:out value="${param.query}" />"</h1>

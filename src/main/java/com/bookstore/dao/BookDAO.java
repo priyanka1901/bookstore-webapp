@@ -47,12 +47,17 @@ public class BookDAO {
     }
 
     /**
-     * *** NEW METHOD ***
-     * Searches for books where the title or ISBN matches the query.
+     * *** UPDATED METHOD ***
+     * Searches for books where the title, ISBN, OR AUTHOR NAME matches the query.
      */
     public List<Book> searchBooks(String query) {
         List<Book> bookList = new ArrayList<>();
-        String sql = "SELECT * FROM Books WHERE title LIKE ? OR isbn LIKE ?";
+        // Use DISTINCT to avoid duplicate books if multiple authors match
+        String sql = "SELECT DISTINCT b.* FROM Books b " +
+                     "LEFT JOIN BookAuthors ba ON b.isbn = ba.isbn " +
+                     "LEFT JOIN Authors a ON ba.author_id = a.author_id " +
+                     "WHERE b.title LIKE ? OR b.isbn LIKE ? OR a.author_name LIKE ?";
+        
         String searchQuery = "%" + query + "%";
         
         System.out.println("[BookDAO] Attempting to search for: " + query);
@@ -62,6 +67,7 @@ public class BookDAO {
             
             stmt.setString(1, searchQuery);
             stmt.setString(2, searchQuery);
+            stmt.setString(3, searchQuery); // Set the third parameter for author search
             
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
