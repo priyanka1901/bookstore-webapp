@@ -97,25 +97,47 @@ fi
 # 4. Configure Database
 # ---------------------------------------------------------
 echo "[4/7] Configuring Database..."
-echo "      Setting MySQL root password to '$DB_PASS' (required by app)..."
 
-# Attempt to set password. 
-# On macOS/Homebrew, the socket file might be in /tmp or generated dynamically.
-# 'mysql -e' usually works if the service is running.
-if [ "$OS" = "Darwin" ]; then
-    # Homebrew MySQL usually has no password by default
-    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';" 2>/dev/null || echo "      (Pass update skipped or failed - checking connection...)"
+# Helper function to check connection
+check_mysql_connection() {
+    mysql -u root --password="$1" -e ";" 2>/dev/null
+}
+
+# 1. Check if 'mysql_pass' is already set and working
+if check_mysql_connection "$DB_PASS"; then
+    echo "      MySQL root password is already correct."
 else
-    # Linux often requires sudo for root socket access initially
-    sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';" || echo "      (Note: Password update might have failed if already set. Proceeding...)"
+    # 2. Check if empty password works (default fresh install) OR sudo works (Linux specific)
+    if mysql -u root -e ";" 2>/dev/null; then
+        echo "      No MySQL root password set. Setting it to '$DB_PASS'..."
+        mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';"
+    elif [ "$OS" = "Linux" ] && sudo mysql -e ";" 2>/dev/null; then
+         echo "      Using sudo to set password (Linux auth_socket)..."
+         sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';"
+    else
+        # 3. If we are here, neither 'mysql_pass' nor empty password works.
+        # We need to ask the user.
+        echo "      ! Could not connect to MySQL with empty password or '$DB_PASS'."
+        echo "      ! It implies a different password is set for 'root'."
+        echo "      ! Please enter your CURRENT MySQL root password so we can update it."
+        echo -n "      Password: "
+        read -s CURRENT_SQL_PASS
+        echo ""
+        
+        # Try to update using the provided password
+        if mysql -u root --password="$CURRENT_SQL_PASS" -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';" 2>/dev/null; then
+             echo "      Password successfully updated to '$DB_PASS'."
+        else
+             echo "      ERROR: Authentication failed with the provided password."
+             echo "      Please reset your MySQL root password manually to '$DB_PASS' and run this script again."
+             exit 1
+        fi
+    fi
 fi
 
 echo "      Importing Schema from schema.sql..."
-# Try connecting with the new password
-mysql -u$DB_USER -p$DB_PASS < schema.sql 2>/dev/null || {
-    echo "      Could not connect with password. Trying without password (for Linux sudo access)..."
-    sudo mysql < schema.sql
-}
+# Now we are guaranteed to have the correct password
+mysql -u$DB_USER -p$DB_PASS < schema.sql
 
 # ---------------------------------------------------------
 # 5. Setup Tomcat
