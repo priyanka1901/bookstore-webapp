@@ -109,11 +109,12 @@ if check_mysql_connection "$DB_PASS"; then
 else
     # 2. Check if empty password works (default fresh install) OR sudo works (Linux specific)
     if mysql -u root -e ";" 2>/dev/null; then
-        echo "      No MySQL root password set. Setting it to '$DB_PASS'..."
-        mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';"
+        echo "      No MySQL root password set. Setting it to '$DB_PASS'"
+        # Using simple IDENTIFIED BY to allow default plugin (caching_sha2_password)
+        mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASS';"
     elif [ "$OS" = "Linux" ] && sudo mysql -e ";" 2>/dev/null; then
          echo "      Using sudo to set password (Linux auth_socket)..."
-         sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';"
+         sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASS';"
     else
         # 3. If we are here, neither 'mysql_pass' nor empty password works.
         # We need to ask the user.
@@ -125,7 +126,7 @@ else
         echo ""
         
         # Try to update using the provided password
-        if mysql -u root --password="$CURRENT_SQL_PASS" -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$DB_PASS';" 2>/dev/null; then
+        if mysql -u root --password="$CURRENT_SQL_PASS" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASS';" 2>/dev/null; then
              echo "      Password successfully updated to '$DB_PASS'."
         else
              echo "      ERROR: Authentication failed with the provided password."
@@ -191,7 +192,6 @@ echo "=========================================="
 echo "   SUCCESS! Application Deployed.         "
 echo "=========================================="
 echo "Access the application at: http://localhost:8080/bookstore-webapp/"
-echo ""
+
 echo "Admin Login: admin@bookstore.com"
 echo "DB Password set to: $DB_PASS"
-echo ""
