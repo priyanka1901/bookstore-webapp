@@ -75,6 +75,13 @@
 
         <h1>Author Management</h1>
 
+        <!-- Error Message Display -->
+        <c:if test="${not empty errorMessage}">
+            <div style="color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; padding: 10px; margin-bottom: 15px; border: 1px solid transparent; border-radius: .25rem;">
+                <c:out value="${errorMessage}" />
+            </div>
+        </c:if>
+
         <a href="${pageContext.request.contextPath}/newAuthor" class="add-button">+ Add New Author</a>
         
         <c:if test="${empty authorList}">

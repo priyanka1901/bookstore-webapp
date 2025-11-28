@@ -139,6 +139,13 @@ public class AuthorServlet extends HttpServlet {
         System.out.println("[AuthorServlet] Executing action: deleteAuthor");
         
         int authorId = Integer.parseInt(request.getParameter("id"));
+        
+        if (authorDAO.hasBooks(authorId)) {
+            request.setAttribute("errorMessage", "Cannot delete author. They have associated books in the database.");
+            listAuthors(request, response);
+            return;
+        }
+
         authorDAO.deleteAuthor(authorId);
         
         response.sendRedirect(request.getContextPath() + "/authorList");

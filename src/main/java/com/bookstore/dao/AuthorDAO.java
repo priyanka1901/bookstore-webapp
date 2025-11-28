@@ -114,6 +114,29 @@ public class AuthorDAO {
     }
 
     /**
+     * Checks if an author is associated with any books.
+     * @param authorId The author's ID.
+     * @return true if the author has books, false otherwise.
+     */
+    public boolean hasBooks(int authorId) {
+        String sql = "SELECT COUNT(*) FROM BookAuthors WHERE author_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, authorId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL Error in hasBooks(): " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * Updates an existing author in the Authors table.
      * @param author The Author object with updated information.
      * @return true if successful, false otherwise.
