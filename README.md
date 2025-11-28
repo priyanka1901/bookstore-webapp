@@ -47,6 +47,20 @@ We have provided an automated script that sets up Java 11, MySQL, Maven, and Tom
     - Deploy the generated `target/bookstore-webapp.war` to your Tomcat 10 `webapps` folder.
     - Ensure your Tomcat is running with **Java 11**.
 
+## Development Workflow
+
+Once the project is installed, for rapid development and testing:
+
+1.  **Make your code changes** in the `src/` directory.
+2.  **Run the refresh script:**
+    ```bash
+    chmod +x refresh.sh # Only needed once
+    ./refresh.sh
+    ```
+    This script will automatically stop Tomcat, rebuild the project, redeploy the application, and start Tomcat again.
+
+3.  **Refresh your browser** to see the changes.
+
 ## Features
 - **User Accounts:** Register and Login.
 - **Book Catalog:** Browse books and view details.
