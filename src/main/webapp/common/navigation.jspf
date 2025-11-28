@@ -7,59 +7,125 @@
 --%>
 
 <style>
+
     /* * This CSS makes the search form (which is an <li>) 
+
      * align horizontally.
+
     */
-    .nav-search-form {
-        display: flex;
-        align-items: center;
-        gap: 5px; /* Space between input and button */
-    }
-    .nav-search-form input[type="text"] {
-        padding: 5px 8px;
-        font-size: 0.9rem;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-    }
-    .nav-search-form button {
-        padding: 5px 10px;
-        font-size: 0.9rem;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+
+        .nav-search-form {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center; /* Center the form elements */
+
+            gap: 8px;
+
+        }
+
+            .nav-search-form input[type="text"] {
+
+                width: 350px;           /* Fixed width to accommodate placeholder */
+
+                padding: 8px 12px;
+
+                font-size: 1rem;
+
+                border-radius: 4px;
+
+                border: 1px solid #ccc;
+
+                vertical-align: middle; /* Ensure alignment */
+
+                margin-bottom: 0;       /* Override conflicting global margin */
+
+            }
+
+            .nav-search-form button {
+
+                padding: 8px 15px;
+
+                font-size: 1rem;
+
+                background-color: #007bff;
+
+                color: white;
+
+                border: none;
+
+                border-radius: 4px;
+
+                cursor: pointer;
+
+                vertical-align: middle; /* Ensure alignment */
+
+                width: auto; /* Override global form button width */
+
+            }
+
     .nav-search-form button:hover {
+
         background-color: #0056b3;
+
     }
+
+
 
     /* --- *** TWO-LINE LAYOUT RULES *** --- */
+
     
+
     /* * 1. Make the <ul> a flex container that can wrap
+
      * and center the links.
+
      */
+
     nav ul {
+
         display: flex;
+
         flex-wrap: wrap;         /* This allows items to wrap to a new line */
+
         justify-content: center; /* This centers the links */
+
         align-items: center;
-        gap: 10px;               /* This adds space between your links */
+
+        gap: 15px;               /* Increased space between your links */
+
         padding: 0;              /* Override any default padding */
+
         list-style: none;        /* Remove bullets */
+
     }
 
+
+
     /* * 2. Target the search bar's <li>, make it 100% wide,
+
      * AND make it a flex container that centers its child.
+
      */
+
     .nav-search-item {
+
         flex-basis: 100%;        /* Makes this <li> take the full width */
+
         margin-top: 10px;        /* Adds some space above the search bar */
+
         
+
         /* THIS IS THE CENTERING RULE */
+
         display: flex;           /* Makes the <li> a flex container */
+
         justify-content: center; /* Centers its child (the <form>) */
+
     }
+
     /* --- *** END OF FIX *** --- */
 
 </style>

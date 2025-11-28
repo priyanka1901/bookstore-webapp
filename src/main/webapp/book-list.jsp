@@ -82,16 +82,16 @@
         <c:if test="${not empty sessionScope.customerName}">
             
             <!-- Welcome Message -->
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2>Welcome, <c:out value="${sessionScope.customerName}" />!</h2>
+            <div style="text-align: center; margin-bottom: 10px;">
+                <h1 style="font-size: 2.5rem; color: #007bff; margin-bottom: 0;">Welcome, <c:out value="${sessionScope.customerName}" />!</h1>
             </div>
 
             <!-- Show a different title based on search -->
             <c:if test="${not empty param.query}">
-                <h1>Search Results for: "<c:out value="${param.query}" />"</h1>
+                <h2 style="margin-top: 10px;">Search Results for: "<c:out value="${param.query}" />"</h2>
             </c:if>
             <c:if test="${empty param.query}">
-                <h1>Book Management</h1>
+                <h2 style="margin-top: 10px;">Book Management</h2>
             </c:if>
     
             <!-- "Add New Book" button -->
