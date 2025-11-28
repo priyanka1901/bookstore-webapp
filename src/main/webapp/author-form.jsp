@@ -31,8 +31,8 @@
                 <input type="hidden" name="authorId" value="<c:out value='${author.authorId}' />" />
         </c:if>
 
-            <label for="name">Author Name</label>
-            <input type="text" name="name" value="<c:out value='${author.name}' />" required>
+            <label for="authorName">Author Name</label>
+            <input type="text" name="authorName" value="<c:out value='${author.authorName}' />" required>
             
             <label for="bio">Biography</label>
             <textarea name="bio" required><c:out value='${author.bio}' /></textarea>
