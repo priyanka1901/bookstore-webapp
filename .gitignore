@@ -1,4 +1,19 @@
-.DS_Store
-.idea/
-.smarttomcat/
+# Maven
 target/
+*.war
+
+# IDEs
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Tomcat (Downloaded by install.sh)
+tomcat/
+apache-tomcat-*/
+
+# OS
+.DS_Store
+Thumbs.db
