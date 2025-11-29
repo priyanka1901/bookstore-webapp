@@ -136,9 +136,11 @@ else
     fi
 fi
 
-echo "      Importing Schema from schema.sql..."
-# Now we are guaranteed to have the correct password
-mysql -u$DB_USER -p$DB_PASS < schema.sql
+echo "      Creating Database Schema from create_schema.sql..."
+mysql -u$DB_USER -p$DB_PASS < create_schema.sql
+
+echo "      Initializing Sample Data from initialize_data.sql..."
+mysql -u$DB_USER -p$DB_PASS < initialize_data.sql
 
 # ---------------------------------------------------------
 # 5. Setup Tomcat

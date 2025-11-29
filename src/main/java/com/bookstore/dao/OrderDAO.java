@@ -260,7 +260,6 @@ public class OrderDAO {
     }
     
     /**
-     * *** NEW METHOD ***
      * Places an order. This is a TRANSACTIONAL operation.
      * 1. Verifies stock for all items.
      * 2. Decrements stock from the Books table.

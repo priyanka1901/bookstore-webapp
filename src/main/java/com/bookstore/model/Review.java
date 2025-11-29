@@ -9,7 +9,7 @@ public class Review {
     private int customerId;
     private int rating;
     private String reviewText;
-    private Timestamp reviewDate; // <-- UPDATED to Timestamp
+    private Timestamp reviewDate;
 
     // Transient field (not in DB, filled by a JOIN)
     private String customerName;

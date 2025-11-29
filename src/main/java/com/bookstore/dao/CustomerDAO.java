@@ -125,8 +125,4 @@ public class CustomerDAO {
 
         return null; // Return null if login fails for any reason
     }
-    
-    // TODO: We can add other methods later, like...
-    // public Customer findCustomerById(int customerId) { ... }
-    // public boolean updateCustomerProfile(Customer customer) { ... }
 }

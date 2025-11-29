@@ -6,10 +6,9 @@ import java.sql.SQLException;
 
 /**
  * DatabaseConnection Utility
- * * This class provides a static method to get a connection to the 
+ *
+ * This class provides a static method to get a connection to the 
  * MySQL database. We will use this in all our DAO classes.
- * * NOTE: For a real-world production app, you would use a connection pool (like c3p0 or HikariCP)
- * for performance. But for a class project, this direct connection is perfectly fine.
  */
 public class DatabaseConnection {
 
@@ -36,14 +35,6 @@ public class DatabaseConnection {
         
         // Etablish the connection
         Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASSWORD);
-        
-        // --- DIAGNOSTIC TEST ---
-        // We are setting the isolation level to read uncommitted data.
-        // This will allow our app to see the data from Workbench
-        // even if it's not committed.
-        //conn.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-        // -----------------------
-        
         return conn;
     }
 

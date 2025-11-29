@@ -64,7 +64,6 @@ public class OrderServlet extends HttpServlet {
                 case "remove":
                     removeFromCart(request, response);
                     break;
-                // *** NEW CASE ***
                 case "checkout":
                     checkout(request, response);
                     break;
@@ -141,7 +140,6 @@ public class OrderServlet extends HttpServlet {
     }
     
     /**
-     * *** NEW METHOD ***
      * Handles the final checkout process.
      */
     private void checkout(HttpServletRequest request, HttpServletResponse response)
