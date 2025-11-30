@@ -73,28 +73,29 @@ INSERT INTO BookAuthors (ISBN, author_id) VALUES
 ('9780307474278', 17), -- The Da Vinci Code by Dan Brown
 ('9781594631931', 18); -- The Kite Runner by Khaled Hosseini
 
--- Insert 20 Customers
+-- Insert 20 Customers with Correct SHA-256 Hashes
+-- Passwords are 'passwordX' where X is the row number (e.g., password1, password2)
 INSERT INTO Customers (name, email, password_hash, address) VALUES
-('Alice Johnson', 'alice.johnson@email.com', '$2a$10$abcdefghijklmnopqrstuv', '123 Oak Street, San Jose, CA 95112'),
-('Bob Smith', 'bob.smith@email.com', '$2a$10$wxyzabcdefghijklmnopqr', '456 Maple Avenue, San Francisco, CA 94102'),
-('Carol Williams', 'carol.w@email.com', '$2a$10$lmnopqrstuvwxyzabcdefg', '789 Pine Road, Los Angeles, CA 90001'),
-('David Brown', 'david.brown@email.com', '$2a$10$hijklmnopqrstuvwxyzabc', '321 Elm Boulevard, San Diego, CA 92101'),
-('Emma Davis', 'emma.davis@email.com', '$2a$10$defghijklmnopqrstuvwxy', '654 Cedar Lane, Sacramento, CA 95814'),
-('Frank Miller', 'frank.miller@email.com', '$2a$10$abcdefghijklmnopqrstuv', '987 Birch Drive, Oakland, CA 94601'),
-('Grace Lee', 'grace.lee@email.com', '$2a$10$wxyzabcdefghijklmnopqr', '246 Willow Court, Berkeley, CA 94704'),
-('Henry Taylor', 'henry.taylor@email.com', '$2a$10$lmnopqrstuvwxyzabcdefg', '135 Spruce Avenue, Fresno, CA 93701'),
-('Iris Anderson', 'iris.anderson@email.com', '$2a$10$hijklmnopqrstuvwxyzabc', '864 Redwood Street, Pasadena, CA 91101'),
-('Jack Wilson', 'jack.wilson@email.com', '$2a$10$defghijklmnopqrstuvwxy', '579 Cypress Lane, Santa Clara, CA 95050'),
-('Kate Martinez', 'kate.martinez@email.com', '$2a$10$abcdefghijklmnopqrstuv', '753 Walnut Way, Sunnyvale, CA 94086'),
-('Liam Garcia', 'liam.garcia@email.com', '$2a$10$wxyzabcdefghijklmnopqr', '159 Hickory Place, Mountain View, CA 94040'),
-('Mia Rodriguez', 'mia.rodriguez@email.com', '$2a$10$lmnopqrstuvwxyzabcdefg', '357 Chestnut Road, Palo Alto, CA 94301'),
-('Noah Martinez', 'noah.martinez@email.com', '$2a$10$hijklmnopqrstuvwxyzabc', '951 Poplar Street, Cupertino, CA 95014'),
-('Olivia Hernandez', 'olivia.hernandez@email.com', '$2a$10$defghijklmnopqrstuvwxy', '246 Magnolia Drive, Milpitas, CA 95035'),
-('Peter Lopez', 'peter.lopez@email.com', '$2a$10$abcdefghijklmnopqrstuv', '864 Sycamore Avenue, Santa Cruz, CA 95060'),
-('Quinn Gonzalez', 'quinn.gonzalez@email.com', '$2a$10$wxyzabcdefghijklmnopqr', '753 Ash Boulevard, San Mateo, CA 94401'),
-('Ruby Perez', 'ruby.perez@email.com', '$2a$10$lmnopqrstuvwxyzabcdefg', '159 Beech Lane, Redwood City, CA 94061'),
-('Sam Torres', 'sam.torres@email.com', '$2a$10$hijklmnopqrstuvwxyzabc', '357 Dogwood Court, Fremont, CA 94536'),
-('Tina Rivera', 'tina.rivera@email.com', '$2a$10$defghijklmnopqrstuvwxy', '951 Sequoia Way, Hayward, CA 94541');
+('Alice Johnson', 'alice.johnson@email.com', '0b14d501a594442a01c6859541bcb3e8164d183d32937b851835442f69d5c94e', '123 Oak Street, San Jose, CA 95112'),
+('Bob Smith', 'bob.smith@email.com', '6cf615d5bcaac778352a8f1f3360d23f02f34ec182e259897fd6ce485d7870d4', '456 Maple Avenue, San Francisco, CA 94102'),
+('Carol Williams', 'carol.w@email.com', '5906ac361a137e2d286465cd6588ebb5ac3f5ae955001100bc41577c3d751764', '789 Pine Road, Los Angeles, CA 90001'),
+('David Brown', 'david.brown@email.com', 'b97873a40f73abedd8d685a7cd5e5f85e4a9cfb83eac26886640a0813850122b', '321 Elm Boulevard, San Diego, CA 92101'),
+('Emma Davis', 'emma.davis@email.com', '8b2c86ea9cf2ea4eb517fd1e06b74f399e7fec0fef92e3b482a6cf2e2b092023', '654 Cedar Lane, Sacramento, CA 95814'),
+('Frank Miller', 'frank.miller@email.com', '598a1a400c1dfdf36974e69d7e1bc98593f2e15015eed8e9b7e47a83b31693d5', '987 Birch Drive, Oakland, CA 94601'),
+('Grace Lee', 'grace.lee@email.com', '5860836e8f13fc9837539a597d4086bfc0299e54ad92148d54538b5c3feefb7c', '246 Willow Court, Berkeley, CA 94704'),
+('Henry Taylor', 'henry.taylor@email.com', '57f3ebab63f156fd8f776ba645a55d96360a15eeffc8b0e4afe4c05fa88219aa', '135 Spruce Avenue, Fresno, CA 93701'),
+('Iris Anderson', 'iris.anderson@email.com', '9323dd6786ebcbf3ac87357cc78ba1abfda6cf5e55cd01097b90d4a286cac90e', '864 Redwood Street, Pasadena, CA 91101'),
+('Jack Wilson', 'jack.wilson@email.com', 'aa4a9ea03fcac15b5fc63c949ac34e7b0fd17906716ac3b8e58c599cdc5a52f0', '579 Cypress Lane, Santa Clara, CA 95050'),
+('Kate Martinez', 'kate.martinez@email.com', '53d453b0c08b6b38ae91515dc88d25fbecdd1d6001f022419629df844f8ba433', '753 Walnut Way, Sunnyvale, CA 94086'),
+('Liam Garcia', 'liam.garcia@email.com', 'b3d17ebbe4f2b75d27b6309cfaae1487b667301a73951e7d523a039cd2dfe110', '159 Hickory Place, Mountain View, CA 94040'),
+('Mia Rodriguez', 'mia.rodriguez@email.com', '48caafb68583936afd0d78a7bfd7046d2492fad94f3c485915f74bb60128620d', '357 Chestnut Road, Palo Alto, CA 94301'),
+('Noah Martinez', 'noah.martinez@email.com', 'c6863e1db9b396ed31a36988639513a1c73a065fab83681f4b77adb648fac3d6', '951 Poplar Street, Cupertino, CA 95014'),
+('Olivia Hernandez', 'olivia.hernandez@email.com', 'c63c2d34ebe84032ad47b87af194fedd17dacf8222b2ea7f4ebfee3dd6db2dfb', '246 Magnolia Drive, Milpitas, CA 95035'),
+('Peter Lopez', 'peter.lopez@email.com', '17a3379984b560dc311bb921b7a46b28aa5cb495667382f887a44a7fdbca7a7a', '864 Sycamore Avenue, Santa Cruz, CA 95060'),
+('Quinn Gonzalez', 'quinn.gonzalez@email.com', '69bfb918de05145fba9dcee9688dfb23f6115845885e48fa39945eebb99d8527', '753 Ash Boulevard, San Mateo, CA 94401'),
+('Ruby Perez', 'ruby.perez@email.com', 'd2042d75a67922194c045da2600e1c92ff6d87e8fb6e0208606665f2d1dfa892', '159 Beech Lane, Redwood City, CA 94061'),
+('Sam Torres', 'sam.torres@email.com', '5790ac3d0b8ae8afc72c2c6fb97654f2b73651c328de0a3b74854ade562dd17a', '357 Dogwood Court, Fremont, CA 94536'),
+('Tina Rivera', 'tina.rivera@email.com', '7535d8f2d8c35d958995610f971287288ab5e8c82a3c4fdc2b6fb5d757a5b9f8', '951 Sequoia Way, Hayward, CA 94541');
 
 -- Insert 20 Reviews
 INSERT INTO Reviews (ISBN, customer_id, rating, review_text, review_date) VALUES

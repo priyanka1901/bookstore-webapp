@@ -61,6 +61,15 @@ Once the project is installed, for rapid development and testing:
 
 3.  **Refresh your browser** to see the changes.
 
+## Sample Users
+The database is initialized with 20 sample customers. You can use any of them to login.
+
+*   **Pattern:** The password for User *X* is `passwordX`.
+*   **User 1:** `alice.johnson@email.com` / `password1`
+*   **User 2:** `bob.smith@email.com` / `password2`
+*   ...
+*   **User 20:** `tina.rivera@email.com` / `password20`
+
 ## Features
 - **User Accounts:** Register and Login.
 - **Book Catalog:** Browse books and view details.
